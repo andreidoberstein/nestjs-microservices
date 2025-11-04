@@ -84,42 +84,6 @@ export class AuthService {
     return { _id: user._id, email: user.email, name: user.name, roles: user.roles ?? ['user'] };
   }
 
-  // async login(user: { _id: string; email: string; name?: string; roles?: string[] }) {
-  //   const freshUser = await this.getUserById(user._id);
-  //   const finalUser = freshUser ?? (user as UserCore);
-  //
-  //   const access_token = this.signAccessToken(finalUser);
-  //   const refresh_token = this.signRefreshToken(finalUser);
-  //
-  //   await this.setUserRefreshToken(finalUser._id, refresh_token);
-  //
-  //   const cookieName = process.env.COOKIE_NAME_RT;
-  //
-  //   res.cookie(cookieName, data.refresh_token, this.auth.cookieOptions());
-  //
-  //   return { access_token, refresh_token };
-  // }
-
-  // async refresh(userIdFromCookie: string, refreshFromCookie: string) {
-  //   try {
-  //     this.jwt.verify(refreshFromCookie, { secret: process.env.REFRESH_SECRET });
-  //   } catch {
-  //     throw new UnauthorizedException('Invalid refresh');
-  //   }
-  //
-  //   const user = await this.getUserById(userIdFromCookie);
-  //   if (!user?.refreshTokenHash) throw new UnauthorizedException('No refresh stored');
-  //
-  //   const ok = await bcrypt.compare(refreshFromCookie, user.refreshTokenHash);
-  //   if (!ok) throw new UnauthorizedException('Refresh mismatch');
-  //
-  //   const access_token = this.signAccessToken(user);
-  //   const new_refresh = this.signRefreshToken(user);
-  //   await this.setUserRefreshToken(user._id, new_refresh);
-  //
-  //   return { access_token, refresh_token: new_refresh, userId: user._id };
-  // }
-
   async logout(userId: string) {
     await this.setUserRefreshToken(userId, null);
     return { loggedOut: true };
