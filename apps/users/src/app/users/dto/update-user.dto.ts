@@ -11,4 +11,7 @@ export class UpdateUserDto {
   @IsOptional()
   @MinLength(6)
   password?: string;
+
+  @IsOptional()
+  roles?: [];
 }
