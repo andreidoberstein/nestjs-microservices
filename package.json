@@ -2,7 +2,15 @@
   "name": "@nestjs-microservices/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "test:unit": "jest --selectProjects unit",
+    "test:e2e": "jest --selectProjects e2e",
+    "test:cov": "jest --coverage"
+  },
+  "jest": {
+    "projects": ["./jest.unit.config.js", "./jest.e2e.config.js"]
+  },
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -31,6 +39,7 @@
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.3.0",
     "nx": "21.3.10",
     "pino-pretty": "^13.1.2",
     "prettier": "^2.6.2",
