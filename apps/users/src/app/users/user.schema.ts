@@ -1,11 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
+import {BaseEntity} from "@app/common";
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
-export class User {
+export class User implements BaseEntity {
+  _id?: string;
+
   @Prop({ required: true, trim: true })
   name: string;
 
@@ -20,6 +23,9 @@ export class User {
 
   @Prop({ required: false })
   refreshToken?: string;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
