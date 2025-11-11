@@ -7,7 +7,7 @@ import {JwtPayload} from "@app/common";
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const required = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -19,8 +19,10 @@ export class RolesGuard implements CanActivate {
     const user = request.user as JwtPayload & { roles?: string[] };
 
     if (!user?.roles) return false
+    return required.every((role) => {
 
-    return required.every((role) => user.roles!.includes(role));
+      user.roles!.includes(role)
+    });
   }
 }
 

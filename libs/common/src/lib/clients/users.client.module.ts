@@ -1,7 +1,7 @@
 import {Module} from "@nestjs/common";
-import {IUserClient} from "@app/common/lib/clients/users.client";
+import {IUserClient} from "./users.client";
 import {HttpModule} from "@nestjs/axios";
-import {UsersHttpClient} from "@app/common/lib/clients/users.http";
+import {UsersHttpClient} from "./users.http";
 
 @Module({
   imports: [HttpModule.register({ timeout: 3000 })],

@@ -7,6 +7,7 @@ import {AuthService} from "./auth.service";
 import {LocalStrategy} from "./strategies/local.strategy";
 import {JwtStrategy} from "./strategies/jwt.strategy";
 import {FactoriesModule, UsersClientModule} from "@app/common";
+import {JwtRefreshStrategy} from "./strategies/jwt-refresh.strategy";
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import {FactoriesModule, UsersClientModule} from "@app/common";
   providers: [
     AuthService,
     LocalStrategy,
-    JwtStrategy
+    JwtStrategy,
+    JwtRefreshStrategy
   ]
 })
 export class AuthModule {}
