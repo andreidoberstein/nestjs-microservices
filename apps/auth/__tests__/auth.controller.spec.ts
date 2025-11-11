@@ -8,27 +8,23 @@ describe('AuthController (unit)', () => {
   const authService = {
     signAccessToken: jest.fn(),
     signRefreshToken: jest.fn(),
-    cookieOptions: jest.fn().mockReturnValue({ httpOnly: true, path: '/' }),
+    cookieOptionsAT: jest.fn().mockReturnValue({ httpOnly: true, path: '/' }),
+    cookieOptionsRT: jest.fn().mockReturnValue({ httpOnly: true, path: '/' }),
+    cookieNames: jest.fn().mockReturnValue({ at: 'at', rt: 'rt' })
   };
 
   beforeAll(async () => {
-    process.env.COOKIE_NAME_AT = 'at';
-    process.env.COOKIE_NAME_RT = 'rt';
-
-    const moduleRef = await Test.createTestingModule({
+    const mod = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [{ provide: AuthService, useValue: authService }],
     }).compile();
-
-    controller = moduleRef.get(AuthController);
+    controller = mod.get(AuthController);
   });
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('login → retorna access_token e seta cookies AT/RT', async () => {
-    // bypass do AuthGuard('local'): simulamos req.user já preenchido
-    const user = { _id: '1', email: 'a@a.com', roles: ['user'] };
-    const req: any = { user };
+  it('login → retorna {access_token} e seta cookies at/rt', async () => {
+    const req: any = { user: { _id: '1', email: 'a@a.com', roles: ['user'] } };
     const res: any = { cookie: jest.fn() };
 
     authService.signAccessToken.mockResolvedValue('access.token');
@@ -36,28 +32,25 @@ describe('AuthController (unit)', () => {
 
     const result = await controller.login(req, res);
 
-    expect(authService.signAccessToken).toHaveBeenCalledWith(user);
-    expect(authService.signRefreshToken).toHaveBeenCalledWith(user);
-
+    expect(authService.signAccessToken).toHaveBeenCalledWith(req.user);
+    expect(authService.signRefreshToken).toHaveBeenCalledWith(req.user);
     expect(res.cookie).toHaveBeenCalledTimes(2);
     expect(res.cookie).toHaveBeenNthCalledWith(
       1,
       'at',
       'access.token',
-      expect.objectContaining({ httpOnly: true, path: '/' }),
+      expect.objectContaining({ httpOnly: true, path: '/' })
     );
     expect(res.cookie).toHaveBeenNthCalledWith(
       2,
       'rt',
       'refresh.token',
-      expect.objectContaining({ httpOnly: true, path: '/' }),
+      expect.objectContaining({ httpOnly: true, path: '/' })
     );
-
     expect(result).toEqual({ access_token: 'access.token' });
   });
 
-  it('refresh → renova access_token e seta cookie AT', async () => {
-    // bypass do AuthGuard('jwt-refresh'): simulamos req.user válido
+  it('refresh → renova access e seta cookie at', async () => {
     const req: any = { user: { sub: '1', email: 'a@a.com' } };
     const res: any = { cookie: jest.fn() };
 
@@ -69,16 +62,14 @@ describe('AuthController (unit)', () => {
     expect(res.cookie).toHaveBeenCalledWith(
       'at',
       'new.access',
-      expect.objectContaining({ httpOnly: true, path: '/' }),
+      expect.objectContaining({ httpOnly: true, path: '/' })
     );
     expect(result).toEqual({ access_token: 'new.access' });
   });
 
-  it('logout → limpa cookies e retorna ok', async () => {
+  it('logout → limpa cookies', async () => {
     const res: any = { clearCookie: jest.fn() };
-
     const result = await controller.logout(res);
-
     expect(res.clearCookie).toHaveBeenCalledWith('at', expect.any(Object));
     expect(res.clearCookie).toHaveBeenCalledWith('rt', expect.any(Object));
     expect(result).toEqual({ ok: true });

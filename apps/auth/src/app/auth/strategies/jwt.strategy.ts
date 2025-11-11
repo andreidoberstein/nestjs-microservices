@@ -10,8 +10,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        cookie(process.env.COOKIE_NAME_AT ?? 'at'),
         ExtractJwt.fromAuthHeaderAsBearerToken(),
+        cookie(process.env.COOKIE_NAME_AT ?? 'at'),
       ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET!,

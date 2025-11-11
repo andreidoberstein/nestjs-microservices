@@ -21,10 +21,15 @@ export class UsersHttpClient implements IUserClient {
 
   async findById(id: string): Promise<UsersCore | null> {
     const url = `${this.baseUrl}/users/internal/by-id/${id}`;
-    const { data } = await firstValueFrom(this.http.get(url, {
-      headers: { 'x-internal-secreat': this.internalSecret }
-    }))
-    return data as UsersCore ?? null;
+    try {
+      const { data } = await firstValueFrom(
+        this.http.get(url, { headers: { 'x-internal-secret': this.internalSecret } })
+      );
+      return (data as UsersCore) ?? null;
+    } catch (e: any) {
+      console.error('[UsersHttpClient] findById failed', e?.response?.status, e?.response?.data);
+      throw e;
+    }
   }
 
   async setRefreshToken(userId: string, refreshToken: string | null): Promise<void> {

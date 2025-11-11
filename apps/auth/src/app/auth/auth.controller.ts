@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response, Request } from 'express';
@@ -27,13 +27,15 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh')
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const user = req.user as any;
-    const at = await this.auth.signAccessToken(user);
 
-    const { at: atName } = this.auth.cookieNames();
-    res.cookie(atName, at, this.auth.cookieOptionsAT());
+      const payload = req.user as any;
+      const user = await this.auth.buildAccessUserFromRefresh(payload);
+      const at = await this.auth.signAccessToken(user);
 
-    return { access_token: at };
+      const { at: atName } = this.auth.cookieNames();
+      res.cookie(atName, at, this.auth.cookieOptionsAT());
+
+      return { access_token: at };
   }
 
   @ApiBearerAuth()

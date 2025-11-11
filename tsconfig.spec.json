@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["jest", "node"],
+    "paths": {
+      "@app/common": ["libs/common/src/index.ts"],
+      "@app/common/*": ["libs/common/src/*"]
+    }
+  },
+  "include": [
+    "**/__tests__/**/*.ts",
+    "**/*.spec.ts",
+    "**/*.e2e.ts"
+  ]
+}
